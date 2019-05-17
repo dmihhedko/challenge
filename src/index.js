@@ -5,7 +5,10 @@ import styled from "styled-components";
 const Container = styled.div`
 width:984px;
 height:400px;
-background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%);
+background:grey;
+font-family:Helvetica, Arial, sans-serif;white-space: pre-line;
+font-size: 16px;
+//background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%);
 //url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
 background-size: cover;
 padding: 40px 60px 10px 30px;
@@ -15,14 +18,17 @@ const SearchBar = styled.div`
     display: flex;
 `;
 
-const Header = styled.div`
+const Title = styled.div`
 color:white;
 font-size: 36px;
-font-family:Helvetica, Arial, sans-serif;white-space: pre-line;
 margin-bottom: 30px;
 `;
 
 const JobInput = styled.input`
+    width: 300px;
+    //font-size: 16px;
+    
+      text-indent: 10px;
     height: 35px;
     border-radius: 3px 0 0 3px;
     border: solid 0;
@@ -30,23 +36,28 @@ const JobInput = styled.input`
 
 
 const LocationInput = styled.input`
+    width: 300px;
+    //font-size: 16px;
+    
+    text-indent: 10px;
     height: 35px;
     border-radius: 3px 0 0 3px;
     border: solid 0;
 `;
 
 const Category = styled.div`
+    width: 300px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
     padding: 10px;
     height: 35px;
-    width: 170px;
     border-radius: 0 3px 3px 0;
     border: solid 0;
     background-color: #ECECEC;
     user-select: none;
+    position: relative;
 `;
 
 const Arrow = styled.div`
@@ -54,8 +65,72 @@ const Arrow = styled.div`
   height: 0; 
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  ${props => props.flip ? `border-bottom: 5px solid black;` : `border-top: 5px solid black;`}
+  ${props => props.flip ? `border-bottom: 5px solid grey;` : `border-top: 5px solid grey;`}
 `;
+
+const DropDownWrapper = styled.div`
+display: ${props => props.dropDownOpen ? `block` : `none`}
+       position: absolute;
+background: white;
+top: 40px;
+    right: 0;
+width: 600px;
+height: 300px; 
+z-index: 1;
+overflow: auto;
+`;
+
+const DropDown = styled.div`
+height: 500px;
+`;
+
+const DropDownHeader = styled.div`
+display: flex;
+    justify-content: space-between;
+padding: 10px;
+box-sizing: border-box;
+height: 35px;
+border-top: grey 1px solid;
+border-bottom: grey 1px solid;
+font-weight:700;  
+;
+`;
+
+const DropDownSection = styled.div`
+padding: 10px;
+ display: flex;
+  flex-wrap: wrap;
+  
+;
+`;
+
+const CheckBox = styled.span`
+ flex-basis: 50%;
+`;
+
+const topCategories = [
+  { name: "IT and telecommunication", id: 1 },
+  { name: "Sales and commerce", id: 2 },
+  { name: "Production, construction, trade", id: 3 },
+  { name: "Management/executive and strategic management", id: 4 },
+  { name: "Other", id: 5 },
+  { name: "Engineering/technical", id: 6 },
+  { name: "Health, medical and social", id: 7 },
+  { name: "Finance and accounting", id: 8 }
+];
+
+const moreCategories = [
+  { name: "Not categorized", id: 9 },
+  { name: "Banking, insurance and financial services", id: 10 },
+  { name: "Purchasing, transport, logistics", id: 11 },
+  { name: "Administration", id: 12 },
+  { name: "Marketing and advertising", id: 13 },
+  { name: "Training/instruction", id: 14 },
+  { name: "Hidden", id: 15 },
+  { name: "Hidden", id: 16 },
+  { name: "Hidden", id: 17 },
+  { name: "Hidden", id: 18 },
+];
 
 // use hooks
 class App extends Component {
@@ -65,7 +140,8 @@ class App extends Component {
       input: "",
       response: [],
       selectedCategory: "in all categories",
-      categoriesOpen: false
+      dropDownOpen: false,
+      checkedCheckboxes: []
     };
   }
 
@@ -95,22 +171,60 @@ class App extends Component {
       );
   };
 
+  handleCheckBoxClick = (id) => {
+    debugger;
+    if (this.state.checkedCheckboxes.includes(id)) {
+
+      this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.concat(id) })
+    } else {
+      this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.filter(it => it !== id) })
+    }
+  }
+  ;
+
   render() {
     console.log(this.state.response);
     return (
       <div>
         <Container>
           <div>
-            <Header>{`For a better working life
-          The new HAROLD jobs`}
-            </Header>
+            <Title>{`asd a asdasd adsadsas adsa
+          asd asd asdasd adaa`}
+            </Title>
             <SearchBar>
               <JobInput type="text" value={this.state.input} />
               <Category onClick={() => {
-                this.setState({ categoriesOpen: !this.state.categoriesOpen })
+                this.setState({ dropDownOpen: !this.state.dropDownOpen })
               }}>
                 <div>{this.state.selectedCategory}</div>
-                <Arrow flip={this.state.categoriesOpen} /> </Category>
+                <Arrow flip={this.state.dropDownOpen} />
+                <DropDownWrapper dropDownOpen={this.state.dropDownOpen}>
+                  <DropDown>
+                    <DropDownHeader>
+                      <span> Top Categories</span>
+                      <span> Search in all categories</span>
+                    </DropDownHeader>
+                    <DropDownSection>
+                      {topCategories.map(category =>
+                        <CheckBox > <label><input  onChange={() => {
+                          this.handleCheckBoxClick(category.id)
+                        }} type="checkbox" value={category.name} checked={this.state.checkedCheckboxes.includes(category.id)}/> {category.name}
+                        </label></CheckBox>)}
+                    </DropDownSection>
+                    <DropDownHeader>
+                      <span> More Categories </span>
+                    </DropDownHeader>
+                    <DropDownSection>
+                      {moreCategories.map(category =>
+                        <CheckBox> <label><input onChange={() => {
+                          this.handleCheckBoxClick(category.id)
+                        }} type="checkbox" value={category.name} checked={this.state.checkedCheckboxes.includes(category.id)}/> {category.name}
+                        </label></CheckBox>)}
+                    </DropDownSection>
+                  </DropDown>
+                </DropDownWrapper>
+              </Category>
+
               <LocationInput type="text" value={this.state.input}
                              onChange={e => this.setState({ input: e.target.value })}
                              onKeyPress={this.handleEnterPress} />
@@ -123,4 +237,10 @@ class App extends Component {
   }
 }
 
-render(<App />, document.getElementById('root'));
+render(
+  <App />,
+  document
+    .getElementById(
+      'root'
+    ))
+;
