@@ -25,7 +25,7 @@ margin-bottom: 30px;
 `;
 
 const JobInput = styled.input`
-    width: 300px;
+    width: 250px;
     //font-size: 16px;
     
       text-indent: 10px;
@@ -36,7 +36,7 @@ const JobInput = styled.input`
 
 
 const LocationInput = styled.input`
-    width: 300px;
+    width: 250px;
     //font-size: 16px;
     
     text-indent: 10px;
@@ -46,7 +46,7 @@ const LocationInput = styled.input`
 `;
 
 const Category = styled.div`
-    width: 300px;
+    width: 250px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -74,7 +74,7 @@ display: ${props => props.dropDownOpen ? `block` : `none`}
 background: white;
 top: 40px;
     right: 0;
-width: 600px;
+width: 500px;
 height: 300px; 
 z-index: 1;
 overflow: auto;
@@ -106,6 +106,10 @@ padding: 10px;
 
 const CheckBox = styled.span`
  flex-basis: 50%;
+`;
+
+const SearchAll = styled.span`
+cursor:pointer;
 `;
 
 const topCategories = [
@@ -159,10 +163,6 @@ class App extends Component {
     document.body.appendChild(script);
   };
 
-
-  componentDidMount() {
-  }
-
   handleEnterPress = () => {
     if (this.state.input && this.state.input.length > 2)
       this.jsonp(
@@ -172,8 +172,7 @@ class App extends Component {
   };
 
   handleCheckBoxClick = (id) => {
-    debugger;
-    if (this.state.checkedCheckboxes.includes(id)) {
+    if (!this.state.checkedCheckboxes.includes(id)) {
 
       this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.concat(id) })
     } else {
@@ -181,6 +180,14 @@ class App extends Component {
     }
   }
   ;
+
+  handleSearchAll = () => {
+    debugger;
+    const idsToAdd = [...topCategories, ...moreCategories].filter(category => !this.state.checkedCheckboxes.includes(category.id));
+
+
+    this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.concat(idsToAdd.reduce((accum,curr)=>[...accum,curr.id],[]))})
+  };
 
   render() {
     console.log(this.state.response);
@@ -198,11 +205,11 @@ class App extends Component {
               }}>
                 <div>{this.state.selectedCategory}</div>
                 <Arrow flip={this.state.dropDownOpen} />
-                <DropDownWrapper dropDownOpen={this.state.dropDownOpen}>
+                <DropDownWrapper onClick={e => {e.stopPropagation()}} dropDownOpen={this.state.dropDownOpen}>
                   <DropDown>
                     <DropDownHeader>
                       <span> Top Categories</span>
-                      <span> Search in all categories</span>
+                      <SearchAll onClick = {() => this.handleSearchAll()}> Search in all categories</SearchAll>
                     </DropDownHeader>
                     <DropDownSection>
                       {topCategories.map(category =>
