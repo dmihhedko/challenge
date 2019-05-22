@@ -1,75 +1,84 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
+import React, { Component } from "react";
+import { render } from "react-dom";
 import styled from "styled-components";
 
 const Container = styled.div`
-width:984px;
-height:400px;
-background:grey;
-font-family:Helvetica, Arial, sans-serif;white-space: pre-line;
-font-size: 16px;
-//background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%);
-//url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
-background-size: cover;
-padding: 40px 60px 10px 30px;
+  width: 984px;
+  height: 400px;
+  background: grey;
+  font-family: Helvetica, Arial, sans-serif;
+  white-space: pre-line;
+  font-size: 16px;
+  //background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%);
+  //url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
+  background-size: cover;
+  padding: 40px 60px 10px 30px;
 `;
 
 const SearchBar = styled.div`
-    display: flex;
+  display: flex;
 `;
 
 const Title = styled.div`
-color:white;
-font-size: 36px;
-margin-bottom: 30px;
+  color: white;
+  font-size: 36px;
+  margin-bottom: 30px;
 `;
 
 const JobInput = styled.input`
-    width: 250px;
-    //font-size: 16px;
-    
-      text-indent: 10px;
-    height: 35px;
-    border-radius: 3px 0 0 3px;
-    border: solid 0;
+  padding: 0;
+  width: 250px;
+  //font-size: 16px;
+
+  text-indent: 10px;
+  height: 35px;
+  border-radius: 3px 0 0 3px;
+  border: solid 0;
 `;
 
-
 const LocationInput = styled.input`
-    width: 250px;
-    //font-size: 16px;
-    
-    text-indent: 10px;
-    height: 35px;
-    border-radius: 3px 0 0 3px;
-    border: solid 0;
+  padding: 0;
+  width: 250px;
+  //font-size: 16px;
+
+  text-indent: 10px;
+  height: 35px;
+  border-radius: 3px 0 0 3px;
+  border: solid 0;
 `;
 
 const Category = styled.div`
-    width: 250px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    padding: 10px;
-    height: 35px;
-    border-radius: 0 3px 3px 0;
-    border: solid 0;
-    background-color: #ECECEC;
-    user-select: none;
-    position: relative;
+  width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 10px;
+  height: 35px;
+  border-radius: 0 3px 3px 0;
+  border: solid 0;
+  background-color: #ececec;
+  user-select: none;
+  position: relative;
+  cursor: pointer;
+  & *{
+  cursor: default;
+  }
 `;
 
 const Arrow = styled.div`
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  ${props => props.flip ? `border-bottom: 5px solid grey;` : `border-top: 5px solid grey;`}
+  ${props =>
+    props.flip
+      ? `border-bottom: 5px solid grey;`
+      : `border-top: 5px solid grey;`}
 `;
 
 const DropDownWrapper = styled.div`
-display: ${props => props.dropDownOpen ? `block` : `none`}
+display: ${props => (props.dropDownOpen ? `block` : `none`)}
        position: absolute;
 background: white;
 top: 40px;
@@ -81,35 +90,36 @@ overflow: auto;
 `;
 
 const DropDown = styled.div`
-height: 500px;
+  height: 500px;
 `;
 
 const DropDownHeader = styled.div`
-display: flex;
-    justify-content: space-between;
-padding: 10px;
-box-sizing: border-box;
-height: 35px;
-border-top: grey 1px solid;
-border-bottom: grey 1px solid;
-font-weight:700;  
-;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 35px;
+  border-top: grey 1px solid;
+  border-bottom: grey 1px solid;
+  font-weight: 700;
 `;
 
 const DropDownSection = styled.div`
-padding: 10px;
- display: flex;
+  padding: 10px;
+  display: flex;
   flex-wrap: wrap;
-  
-;
 `;
 
 const CheckBox = styled.span`
- flex-basis: 50%;
+  flex-basis: 50%;
+  cursor: pointer;
+  & * {
+  cursor: pointer;
+  }
 `;
 
 const SearchAll = styled.span`
-cursor:pointer;
+  cursor: pointer;
 `;
 
 const topCategories = [
@@ -133,7 +143,7 @@ const moreCategories = [
   { name: "Hidden", id: 15 },
   { name: "Hidden", id: 16 },
   { name: "Hidden", id: 17 },
-  { name: "Hidden", id: 18 },
+  { name: "Hidden", id: 18 }
 ];
 
 // use hooks
@@ -151,42 +161,50 @@ class App extends Component {
 
   jsonp = (url, callback) => {
     // It would also to be nice to check if there's any malicious content
-    var callbackName = 'JSONP';
+    var callbackName = "JSONP";
     window[callbackName] = function(data) {
       delete window[callbackName];
       document.body.removeChild(script);
       callback(data);
     };
-    var script = document.createElement('script');
-    script.src =
-      url;
+    var script = document.createElement("script");
+    script.src = url;
     document.body.appendChild(script);
   };
 
   handleEnterPress = () => {
     if (this.state.input && this.state.input.length > 2)
       this.jsonp(
-        `http://gd.geobytes.com/AutoCompleteCity?callback=JSONP&filter=DE&q=${this.state.input}`,
+        `http://gd.geobytes.com/AutoCompleteCity?callback=JSONP&filter=DE&q=${
+          this.state.input
+        }`,
         response => this.setState({ response })
       );
   };
 
-  handleCheckBoxClick = (id) => {
+  handleCheckBoxClick = id => {
     if (!this.state.checkedCheckboxes.includes(id)) {
-
-      this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.concat(id) })
+      this.setState({
+        checkedCheckboxes: this.state.checkedCheckboxes.concat(id)
+      });
     } else {
-      this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.filter(it => it !== id) })
+      this.setState({
+        checkedCheckboxes: this.state.checkedCheckboxes.filter(it => it !== id)
+      });
     }
-  }
-  ;
+  };
 
   handleSearchAll = () => {
     debugger;
-    const idsToAdd = [...topCategories, ...moreCategories].filter(category => !this.state.checkedCheckboxes.includes(category.id));
+    const idsToAdd = [...topCategories, ...moreCategories].filter(
+      category => !this.state.checkedCheckboxes.includes(category.id)
+    );
 
-
-    this.setState({ checkedCheckboxes: this.state.checkedCheckboxes.concat(idsToAdd.reduce((accum,curr)=>[...accum,curr.id],[]))})
+    this.setState({
+      checkedCheckboxes: this.state.checkedCheckboxes.concat(
+        idsToAdd.reduce((accum, curr) => [...accum, curr.id], [])
+      )
+    });
   };
 
   render() {
@@ -195,46 +213,86 @@ class App extends Component {
       <div>
         <Container>
           <div>
-            <Title>{`asd a asdasd adsadsas adsa
+            <Title>
+              {`asd a asdasd adsadsas adsa
           asd asd asdasd adaa`}
             </Title>
             <SearchBar>
               <JobInput type="text" value={this.state.input} />
-              <Category onClick={() => {
-                this.setState({ dropDownOpen: !this.state.dropDownOpen })
-              }}>
+              <Category
+                onClick={() => {
+                  this.setState({ dropDownOpen: !this.state.dropDownOpen });
+                }}
+              >
                 <div>{this.state.selectedCategory}</div>
                 <Arrow flip={this.state.dropDownOpen} />
-                <DropDownWrapper onClick={e => {e.stopPropagation()}} dropDownOpen={this.state.dropDownOpen}>
+                <DropDownWrapper
+                  onClick={e => {
+                    e.stopPropagation();
+                  }}
+                  dropDownOpen={this.state.dropDownOpen}
+                >
                   <DropDown>
                     <DropDownHeader>
                       <span> Top Categories</span>
-                      <SearchAll onClick = {() => this.handleSearchAll()}> Search in all categories</SearchAll>
+                      <SearchAll onClick={() => this.handleSearchAll()}>
+                        {" "}
+                        Search in all categories
+                      </SearchAll>
                     </DropDownHeader>
                     <DropDownSection>
-                      {topCategories.map(category =>
-                        <CheckBox > <label><input  onChange={() => {
-                          this.handleCheckBoxClick(category.id)
-                        }} type="checkbox" value={category.name} checked={this.state.checkedCheckboxes.includes(category.id)}/> {category.name}
-                        </label></CheckBox>)}
+                      {topCategories.map(category => (
+                        <CheckBox>
+                          {" "}
+                          <label>
+                            <input
+                              onChange={() => {
+                                this.handleCheckBoxClick(category.id);
+                              }}
+                              type="checkbox"
+                              value={category.name}
+                              checked={this.state.checkedCheckboxes.includes(
+                                category.id
+                              )}
+                            />{" "}
+                            {category.name}
+                          </label>
+                        </CheckBox>
+                      ))}
                     </DropDownSection>
                     <DropDownHeader>
                       <span> More Categories </span>
                     </DropDownHeader>
                     <DropDownSection>
-                      {moreCategories.map(category =>
-                        <CheckBox> <label><input onChange={() => {
-                          this.handleCheckBoxClick(category.id)
-                        }} type="checkbox" value={category.name} checked={this.state.checkedCheckboxes.includes(category.id)}/> {category.name}
-                        </label></CheckBox>)}
+                      {moreCategories.map(category => (
+                        <CheckBox>
+                          {" "}
+                          <label>
+                            <input
+                              onChange={() => {
+                                this.handleCheckBoxClick(category.id);
+                              }}
+                              type="checkbox"
+                              value={category.name}
+                              checked={this.state.checkedCheckboxes.includes(
+                                category.id
+                              )}
+                            />{" "}
+                            {category.name}
+                          </label>
+                        </CheckBox>
+                      ))}
                     </DropDownSection>
                   </DropDown>
                 </DropDownWrapper>
               </Category>
 
-              <LocationInput type="text" value={this.state.input}
-                             onChange={e => this.setState({ input: e.target.value })}
-                             onKeyPress={this.handleEnterPress} />
+              <LocationInput
+                type="text"
+                value={this.state.input}
+                onChange={e => this.setState({ input: e.target.value })}
+                onKeyPress={this.handleEnterPress}
+              />
               <button> Search</button>
             </SearchBar>
           </div>
@@ -244,10 +302,4 @@ class App extends Component {
   }
 }
 
-render(
-  <App />,
-  document
-    .getElementById(
-      'root'
-    ))
-;
+render(<App />, document.getElementById("root"));
