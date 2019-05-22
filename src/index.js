@@ -61,8 +61,8 @@ const Category = styled.div`
   user-select: none;
   position: relative;
   cursor: pointer;
-  & *{
-  cursor: default;
+  & * {
+    cursor: default;
   }
 `;
 
@@ -114,7 +114,7 @@ const CheckBox = styled.span`
   flex-basis: 50%;
   cursor: pointer;
   & * {
-  cursor: pointer;
+    cursor: pointer;
   }
 `;
 
@@ -172,6 +172,20 @@ class App extends Component {
     document.body.appendChild(script);
   };
 
+  updateCategoryText = () => {
+    const jointArray = [...topCategories, ...moreCategories];
+    const namesToAdd = this.state.checkedCheckboxes.map(
+      checkedId => jointArray.find(category => category.id === checkedId).name
+    );
+    debugger;
+    const selectedCategory =
+      jointArray.length === this.state.checkedCheckboxes.length
+        ? "in all categories"
+        : namesToAdd.join(", ");
+
+    this.setState({ selectedCategory });
+  };
+
   handleEnterPress = () => {
     if (this.state.input && this.state.input.length > 2)
       this.jsonp(
@@ -184,26 +198,39 @@ class App extends Component {
 
   handleCheckBoxClick = id => {
     if (!this.state.checkedCheckboxes.includes(id)) {
-      this.setState({
-        checkedCheckboxes: this.state.checkedCheckboxes.concat(id)
-      });
+      this.setState(
+        {
+          checkedCheckboxes: this.state.checkedCheckboxes.concat(id)
+        },
+        () => {
+          this.updateCategoryText();
+        }
+      );
     } else {
-      this.setState({
-        checkedCheckboxes: this.state.checkedCheckboxes.filter(it => it !== id)
-      });
+      this.setState(
+        {
+          checkedCheckboxes: this.state.checkedCheckboxes.filter(
+            it => it !== id
+          )
+        },
+        () => {
+          this.updateCategoryText();
+        }
+      );
     }
   };
 
   handleSearchAll = () => {
-    debugger;
     const idsToAdd = [...topCategories, ...moreCategories].filter(
       category => !this.state.checkedCheckboxes.includes(category.id)
     );
 
     this.setState({
       checkedCheckboxes: this.state.checkedCheckboxes.concat(
-        idsToAdd.reduce((accum, curr) => [...accum, curr.id], [])
+        idsToAdd.reduce((accum, curr) => [...accum, curr.id], []),
       )
+    }, () => {
+      this.updateCategoryText();
     });
   };
 
