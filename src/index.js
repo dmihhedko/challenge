@@ -66,6 +66,13 @@ const Category = styled.div`
   }
 `;
 
+const CategoryText = styled.div`
+  white-space: nowrap;
+  height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const Arrow = styled.div`
   width: 0;
   height: 0;
@@ -155,7 +162,8 @@ class App extends Component {
       response: [],
       selectedCategory: "in all categories",
       dropDownOpen: false,
-      checkedCheckboxes: []
+      checkedCheckboxes: [],
+      locationInputInFocus: false,
     };
   }
 
@@ -186,7 +194,7 @@ class App extends Component {
     this.setState({ selectedCategory });
   };
 
-  handleEnterPress = () => {
+  handleKeyPress = () => {
     if (this.state.input && this.state.input.length > 2)
       this.jsonp(
         `http://gd.geobytes.com/AutoCompleteCity?callback=JSONP&filter=DE&q=${
@@ -225,13 +233,20 @@ class App extends Component {
       category => !this.state.checkedCheckboxes.includes(category.id)
     );
 
-    this.setState({
-      checkedCheckboxes: this.state.checkedCheckboxes.concat(
-        idsToAdd.reduce((accum, curr) => [...accum, curr.id], []),
-      )
-    }, () => {
-      this.updateCategoryText();
-    });
+    this.setState(
+      {
+        checkedCheckboxes: this.state.checkedCheckboxes.concat(
+          idsToAdd.reduce((accum, curr) => [...accum, curr.id], [])
+        )
+      },
+      () => {
+        this.updateCategoryText();
+      }
+    );
+  };
+
+  handleLocationInputFocus = (locationInputInFocus) => {
+    this.setState(locationInputInFocus)
   };
 
   render() {
@@ -251,7 +266,7 @@ class App extends Component {
                   this.setState({ dropDownOpen: !this.state.dropDownOpen });
                 }}
               >
-                <div>{this.state.selectedCategory}</div>
+                <CategoryText>{this.state.selectedCategory}</CategoryText>
                 <Arrow flip={this.state.dropDownOpen} />
                 <DropDownWrapper
                   onClick={e => {
@@ -318,7 +333,9 @@ class App extends Component {
                 type="text"
                 value={this.state.input}
                 onChange={e => this.setState({ input: e.target.value })}
-                onKeyPress={this.handleEnterPress}
+                onFocus = {() => {this.handleLocationInputFocus(true)}}
+                onBlur={() => {this.handleLocationInputFocus(false)}}
+                onKeyPress={this.handleKeyPress}
               />
               <button> Search</button>
             </SearchBar>
