@@ -47,6 +47,26 @@ const LocationInput = styled.input`
   border: solid 0;
 `;
 
+const LocationInputWrapper = styled.div`
+  position: relative;
+`;
+
+const LocationInputDropDown = styled.div`
+  height: auto;
+  width: 250px;
+  position: absolute;
+  z-index: 1;
+  background-color: white;
+  top: 35px;
+  right: 0;
+`;
+
+const LocationInputDropDownItem = styled.div`
+  padding: 10px;
+  border-bottom: 1px grey solid;
+  cursor: pointer;
+`;
+
 const Category = styled.div`
   width: 250px;
   display: flex;
@@ -163,7 +183,7 @@ class App extends Component {
       selectedCategory: "in all categories",
       dropDownOpen: false,
       checkedCheckboxes: [],
-      locationInputInFocus: false,
+      locationInputInFocus: false
     };
   }
 
@@ -185,7 +205,6 @@ class App extends Component {
     const namesToAdd = this.state.checkedCheckboxes.map(
       checkedId => jointArray.find(category => category.id === checkedId).name
     );
-    debugger;
     const selectedCategory =
       jointArray.length === this.state.checkedCheckboxes.length
         ? "in all categories"
@@ -194,7 +213,7 @@ class App extends Component {
     this.setState({ selectedCategory });
   };
 
-  handleKeyPress = () => {
+  handleLocationSearch = () => {
     if (this.state.input && this.state.input.length > 2)
       this.jsonp(
         `http://gd.geobytes.com/AutoCompleteCity?callback=JSONP&filter=DE&q=${
@@ -245,8 +264,12 @@ class App extends Component {
     );
   };
 
-  handleLocationInputFocus = (locationInputInFocus) => {
-    this.setState(locationInputInFocus)
+  handleLocationInputFocus = locationInputInFocus => {
+    this.setState({ locationInputInFocus });
+  };
+
+  setInput = input => {
+    this.setState({ input });
   };
 
   render() {
@@ -260,7 +283,11 @@ class App extends Component {
           asd asd asdasd adaa`}
             </Title>
             <SearchBar>
-              <JobInput type="text" value={this.state.input} />
+              <JobInput
+                type="text"
+                value={this.state.jobInput}
+                onChange={e => this.setState({ jobInput: e.target.value })}
+              />
               <Category
                 onClick={() => {
                   this.setState({ dropDownOpen: !this.state.dropDownOpen });
@@ -328,15 +355,30 @@ class App extends Component {
                   </DropDown>
                 </DropDownWrapper>
               </Category>
-
-              <LocationInput
-                type="text"
-                value={this.state.input}
-                onChange={e => this.setState({ input: e.target.value })}
-                onFocus = {() => {this.handleLocationInputFocus(true)}}
-                onBlur={() => {this.handleLocationInputFocus(false)}}
-                onKeyPress={this.handleKeyPress}
-              />
+              <LocationInputWrapper>
+                <LocationInput
+                  type="text"
+                  value={this.state.input}
+                  onChange={e => this.setState({ input: e.target.value }, () => this.handleLocationSearch())}
+                  onFocus={() => {
+                    this.handleLocationInputFocus(true);
+                  }}
+                />
+                {this.state.locationInputInFocus && (
+                  <LocationInputDropDown>
+                    {this.state.response.map(item => (
+                      <LocationInputDropDownItem
+                        onClick={() => {
+                          this.setInput(item);
+                          this.handleLocationInputFocus(false);
+                        }}
+                      >
+                        {item}
+                      </LocationInputDropDownItem>
+                    ))}
+                  </LocationInputDropDown>
+                )}
+              </LocationInputWrapper>
               <button> Search</button>
             </SearchBar>
           </div>
