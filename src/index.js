@@ -8,21 +8,36 @@ const Container = styled.div`
   background: grey;
   font-family: "Xing Sans","Trebuchet MS",Verdana,sans-serif;
   white-space: pre-line;
-  font-size: 16px;
+  font-size: 14px;
   background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%),
   url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
   background-size: cover;
   padding: 40px 60px 10px 30px;
+      background-position-y: top, -60px;
+
 `;
 
 const SearchBar = styled.div`
   display: flex;
 `;
 
+const Button = styled.div`
+  color: black;
+  font-weight: 700;
+      background-image: linear-gradient(to bottom,#bde300 0,#8fac00 100%);
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  user-select: none;
+  cursor: pointer;
+`;
+
 const Title = styled.div`
   color: white;
   font-size: 36px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   font-weight: 200;
 `;
 
@@ -114,14 +129,20 @@ background: white;
 top: 40px;
     right: 0;
 width: 500px;
-height: 420px;
+height: 380px;
 z-index: 1;
 overflow: auto;
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  border-radius: 5px;
+}
 `;
 
-const DropDown = styled.div`
-  height: 500px;
-`;
 
 const DropDownHeader = styled.div`
   display: flex;
@@ -193,10 +214,10 @@ const CheckBox = styled.span`
 
 > :first-child span:after {
 color: #007575;
-  left: 9px;
-  top: 5px;
-  width: 5px;
-  height: 10px;
+      left: 3px;
+    top: 0px;
+    width: 4px;
+    height: 8px;
   border: solid ;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
@@ -271,6 +292,7 @@ function App() {
   };
 
   const updateCategoryText = () => {
+    if (checkedCheckboxes.length > 0){
     const jointArray = [...topCategories, ...moreCategories];
     const namesToAdd = checkedCheckboxes.map(
       checkedId => jointArray.find(category => category.id === checkedId).name
@@ -280,7 +302,7 @@ function App() {
         ? "in all categories"
         : namesToAdd.join(", ");
 
-    setSelectedCategory(selectedCategory);
+    setSelectedCategory(selectedCategory);}
   };
 
   const handleLocationSearch = () => {
@@ -354,6 +376,7 @@ function App() {
               type="text"
               value={jobInput}
               onChange={e => setJobInput(e.target.value)}
+              placeholder={"Enter keyword"}
             />
             <Category
               ref={categoryRef}
@@ -367,7 +390,7 @@ function App() {
                 }}
                 dropDownOpen={dropDownOpen}
               >
-                <DropDown>
+                <div>
                   <DropDownHeader>
                     <span> Top Categories</span>
                     <SearchAll onClick={() => handleSearchAll()}>
@@ -380,12 +403,13 @@ function App() {
                     <span> More Categories </span>
                   </DropDownHeader>
                   {dropDownSection(moreCategories)}
-                </DropDown>
+                </div>
               </DropDownWrapper>
             </Category>
             <LocationInputWrapper>
               <LocationInput
                 type="text"
+                   placeholder={"Location"}
                 value={input}
                 onChange={e => {
                   setInput(e.target.value);
@@ -393,6 +417,8 @@ function App() {
                 onFocus={() => {
                   setLocationInputInFocus(true);
                 }}
+                /* eslint-disable-next-line */
+                onKeyPress={(e)=>{e.charCode === 13?alert("submitted"):undefined;}}
               />
               {locationInputInFocus && (
                 <LocationInputDropDown>
@@ -410,7 +436,7 @@ function App() {
                 </LocationInputDropDown>
               )}
             </LocationInputWrapper>
-            <button> Search</button>
+            <Button onClick={() => {alert("submitted")}}> Search</Button>
           </SearchBar>
         </div>
       </Container>
