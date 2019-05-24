@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
 
@@ -143,9 +143,9 @@ const CheckBox = styled.span`
   & * {
     cursor: pointer;
   }
- &  input{
- background: white;
- }
+  & input {
+    background: white;
+  }
 `;
 
 const SearchAll = styled.span`
@@ -176,22 +176,17 @@ const moreCategories = [
   { name: "Hidden", id: 18 }
 ];
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      input: "",
-      jobInput:"",
-      response: [],
-      selectedCategory: "in all categories",
-      dropDownOpen: false,
-      checkedCheckboxes: [],
-      locationInputInFocus: false
-    };
-  }
-  categoryRef = null;
+function App() {
+  const [input, setInput] = useState("");
+  const [jobInput, setJobInput] = useState("");
+  const [response, setResponse] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("in all categories");
+  const [dropDownOpen, setDropDownOpen] = useState(false);
+  const [checkedCheckboxes, setCheckedCheckboxes] = useState([]);
+  const [locationInputInFocus, setLocationInputInFocus] = useState(false);
+  const categoryRef = useRef(null);
 
-  jsonp = (url, callback) => {
+  const jsonp = (url, callback) => {
     // Most examples I've found use either jQuery or other similar libraries to handle JSONP,
     // including the API's website
     // It would also be prudent to check the result for malicious content, but we would first need to
@@ -211,211 +206,173 @@ class App extends Component {
     document.body.appendChild(script);
   };
 
-  componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside);
-  }
-
-  handleClickOutside = event => {
-    if (this.categoryRef && !this.categoryRef.contains(event.target)) {
-      this.setState({ dropDownOpen: false });
+  const handleClickOutside = event => {
+    if (categoryRef && !categoryRef.current.contains(event.target)) {
+      setDropDownOpen(false);
     }
   };
 
-  updateCategoryText = () => {
+  const updateCategoryText = () => {
     const jointArray = [...topCategories, ...moreCategories];
-    const namesToAdd = this.state.checkedCheckboxes.map(
+    const namesToAdd = checkedCheckboxes.map(
       checkedId => jointArray.find(category => category.id === checkedId).name
     );
     const selectedCategory =
-      jointArray.length === this.state.checkedCheckboxes.length
+      jointArray.length === checkedCheckboxes.length
         ? "in all categories"
         : namesToAdd.join(", ");
 
-    this.setState({ selectedCategory });
+    setSelectedCategory(selectedCategory);
   };
 
-  handleLocationSearch = () => {
-    if (this.state.input && this.state.input.length > 2)
-      this.jsonp(
-        `http://gd.geobytes.com/AutoCompleteCity?callback=JSONP&filter=DE&q=${
-          this.state.input
-        }`,
-        response => this.setState({ response })
+  const handleLocationSearch = () => {
+    if (input && input.length > 2)
+      jsonp(
+        `http://gd.geobytes.com/AutoCompleteCity?callback=JSONP&filter=DE&q=${input}`,
+        response => setResponse(response)
       );
   };
 
-  handleCheckBoxClick = id => {
-    if (!this.state.checkedCheckboxes.includes(id)) {
-      this.setState(
-        {
-          checkedCheckboxes: this.state.checkedCheckboxes.concat(id)
-        },
-        () => {
-          this.updateCategoryText();
-        }
-      );
+  const handleCheckBoxClick = id => {
+    if (!checkedCheckboxes.includes(id)) {
+      setCheckedCheckboxes(checkedCheckboxes.concat(id));
     } else {
-      this.setState(
-        {
-          checkedCheckboxes: this.state.checkedCheckboxes.filter(
-            it => it !== id
-          )
-        },
-        () => {
-          this.updateCategoryText();
-        }
-      );
+      setCheckedCheckboxes(checkedCheckboxes.filter(it => it !== id));
+
     }
   };
 
-  handleSearchAll = () => {
+  const handleSearchAll = () => {
     const idsToAdd = [...topCategories, ...moreCategories].filter(
-      category => !this.state.checkedCheckboxes.includes(category.id)
+      category => !checkedCheckboxes.includes(category.id)
     );
 
-    this.setState(
-      {
-        checkedCheckboxes: this.state.checkedCheckboxes.concat(
-          idsToAdd.reduce((accum, curr) => [...accum, curr.id], [])
-        )
-      },
-      () => {
-        this.updateCategoryText();
-      }
+    setCheckedCheckboxes(
+      checkedCheckboxes.concat(
+        idsToAdd.reduce((accum, curr) => [...accum, curr.id], [])
+      )
     );
   };
 
-  handleLocationInputFocus = locationInputInFocus => {
-    this.setState({ locationInputInFocus });
-  };
+  useEffect(() => {
+    updateCategoryText();
+    handleLocationSearch();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
 
-  setInput = input => {
-    this.setState({ input });
-  };
-
-  render() {
-    return (
-      <div>
-        <Container>
-          <div>
-            <Title>
-              {`asd a asdasd adsadsas adsa
+  return (
+    <div>
+      <Container>
+        <div>
+          <Title>
+            {`asd a asdasd adsadsas adsa
           asd asd asdasd adaa`}
-            </Title>
-            <SearchBar>
-              <JobInput
-                type="text"
-                value={this.state.jobInput}
-                onChange={e => this.setState({ jobInput: e.target.value })}
-              />
-              <Category
-                ref={el => (this.categoryRef = el)}
-                onClick={() => {
-                  this.setState({ dropDownOpen: !this.state.dropDownOpen });
+          </Title>
+          <SearchBar>
+            <JobInput
+              type="text"
+              value={jobInput}
+              onChange={e => setJobInput(e.target.value)}
+            />
+            <Category
+              ref={categoryRef}
+              onClick={() => setDropDownOpen(!dropDownOpen)}
+            >
+              <CategoryText>{selectedCategory}</CategoryText>
+              <Arrow flip={dropDownOpen} />
+              <DropDownWrapper
+                onClick={e => {
+                  e.stopPropagation();
                 }}
+                dropDownOpen={dropDownOpen}
               >
-                <CategoryText>{this.state.selectedCategory}</CategoryText>
-                <Arrow flip={this.state.dropDownOpen} />
-                <DropDownWrapper
-                  onClick={e => {
-                    e.stopPropagation();
-                  }}
-                  dropDownOpen={this.state.dropDownOpen}
-                >
-                  <DropDown>
-                    <DropDownHeader>
-                      <span> Top Categories</span>
-                      <SearchAll onClick={() => this.handleSearchAll()}>
+                <DropDown>
+                  <DropDownHeader>
+                    <span> Top Categories</span>
+                    <SearchAll onClick={() => handleSearchAll()}>
+                      {" "}
+                      Search in all categories
+                    </SearchAll>
+                  </DropDownHeader>
+                  <DropDownSection>
+                    {topCategories.map((category, idx) => (
+                      <CheckBox key={idx}>
                         {" "}
-                        Search in all categories
-                      </SearchAll>
-                    </DropDownHeader>
-                    <DropDownSection>
-                      {topCategories.map((category, idx) => (
-                        <CheckBox key={idx}>
-                          {" "}
-                          <label>
-                            <input
-                              onChange={() => {
-                                this.handleCheckBoxClick(category.id);
-                              }}
-                              type="checkbox"
-                              value={category.name}
-                              checked={this.state.checkedCheckboxes.includes(
-                                category.id
-                              )}
-                            />{" "}
-                            {category.name}
-                          </label>
-                        </CheckBox>
-                      ))}
-                    </DropDownSection>
-                    <DropDownHeader>
-                      <span> More Categories </span>
-                    </DropDownHeader>
-                    <DropDownSection>
-                      {moreCategories.map((category, idx) => (
-                        <CheckBox key={idx}>
-                          {" "}
-                          <label>
-                            <input
-                              onChange={() => {
-                                this.handleCheckBoxClick(category.id);
-                              }}
-                              type="checkbox"
-                              value={category.name}
-                              checked={this.state.checkedCheckboxes.includes(
-                                category.id
-                              )}
-                            />{" "}
-                            {category.name}
-                          </label>
-                        </CheckBox>
-                      ))}
-                    </DropDownSection>
-                  </DropDown>
-                </DropDownWrapper>
-              </Category>
-              <LocationInputWrapper>
-                <LocationInput
-                  type="text"
-                  value={this.state.input}
-                  onChange={e =>
-                    this.setState({ input: e.target.value }, () =>
-                      this.handleLocationSearch()
-                    )
-                  }
-                  onFocus={() => {
-                    this.handleLocationInputFocus(true);
-                  }}
-                />
-                {this.state.locationInputInFocus && (
-                  <LocationInputDropDown>
-                    {this.state.response.map((item, idx) => (
-                      <LocationInputDropDownItem
-                        key={idx}
-                        onClick={() => {
-                          this.setInput(item);
-                          this.handleLocationInputFocus(false);
-                        }}
-                      >
-                        {item}
-                      </LocationInputDropDownItem>
+                        <label>
+                          <input
+                            onChange={() => {
+                              handleCheckBoxClick(category.id);
+                            }}
+                            type="checkbox"
+                            value={category.name}
+                            checked={checkedCheckboxes.includes(category.id)}
+                          />{" "}
+                          {category.name}
+                        </label>
+                      </CheckBox>
                     ))}
-                  </LocationInputDropDown>
-                )}
-              </LocationInputWrapper>
-              <button> Search</button>
-            </SearchBar>
-          </div>
-        </Container>
-      </div>
-    );
-  }
+                  </DropDownSection>
+                  <DropDownHeader>
+                    <span> More Categories </span>
+                  </DropDownHeader>
+                  <DropDownSection>
+                    {moreCategories.map((category, idx) => (
+                      <CheckBox key={idx}>
+                        {" "}
+                        <label>
+                          <input
+                            onChange={() => {
+                              handleCheckBoxClick(category.id);
+                            }}
+                            type="checkbox"
+                            value={category.name}
+                            checked={checkedCheckboxes.includes(category.id)}
+                          />{" "}
+                          {category.name}
+                        </label>
+                      </CheckBox>
+                    ))}
+                  </DropDownSection>
+                </DropDown>
+              </DropDownWrapper>
+            </Category>
+            <LocationInputWrapper>
+              {/*TODO find better way*/}
+              <LocationInput
+                type="text"
+                value={input}
+                onChange={e => {
+                  setInput(e.target.value);
+                }}
+                onFocus={() => {
+                  setLocationInputInFocus(true);
+                }}
+              />
+              {locationInputInFocus && (
+                <LocationInputDropDown>
+                  {response.map((item, idx) => (
+                    <LocationInputDropDownItem
+                      key={idx}
+                      onClick={() => {
+                        setInput(item);
+                        setLocationInputInFocus(false);
+                      }}
+                    >
+                      {item}
+                    </LocationInputDropDownItem>
+                  ))}
+                </LocationInputDropDown>
+              )}
+            </LocationInputWrapper>
+            <button> Search</button>
+          </SearchBar>
+        </div>
+      </Container>
+    </div>
+  );
 }
 
 render(<App />, document.getElementById("root"));
