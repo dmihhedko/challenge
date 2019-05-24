@@ -111,7 +111,7 @@ background: white;
 top: 40px;
     right: 0;
 width: 500px;
-height: 300px; 
+height: 300px;
 z-index: 1;
 overflow: auto;
 `;
@@ -263,6 +263,25 @@ function App() {
     };
   });
 
+    const dropDownSection = (array) => (<DropDownSection>
+                    {array.map((category, idx) => (
+                      <CheckBox key={idx}>
+                        {" "}
+                        <label>
+                          <input
+                            onChange={() => {
+                              handleCheckBoxClick(category.id);
+                            }}
+                            type="checkbox"
+                            value={category.name}
+                            checked={checkedCheckboxes.includes(category.id)}
+                          />{" "}
+                          {category.name}
+                        </label>
+                      </CheckBox>
+                    ))}
+                  </DropDownSection>)
+
   return (
     <div>
       <Container>
@@ -297,45 +316,11 @@ function App() {
                       Search in all categories
                     </SearchAll>
                   </DropDownHeader>
-                  <DropDownSection>
-                    {topCategories.map((category, idx) => (
-                      <CheckBox key={idx}>
-                        {" "}
-                        <label>
-                          <input
-                            onChange={() => {
-                              handleCheckBoxClick(category.id);
-                            }}
-                            type="checkbox"
-                            value={category.name}
-                            checked={checkedCheckboxes.includes(category.id)}
-                          />{" "}
-                          {category.name}
-                        </label>
-                      </CheckBox>
-                    ))}
-                  </DropDownSection>
+                  {dropDownSection(topCategories)}
                   <DropDownHeader>
                     <span> More Categories </span>
                   </DropDownHeader>
-                  <DropDownSection>
-                    {moreCategories.map((category, idx) => (
-                      <CheckBox key={idx}>
-                        {" "}
-                        <label>
-                          <input
-                            onChange={() => {
-                              handleCheckBoxClick(category.id);
-                            }}
-                            type="checkbox"
-                            value={category.name}
-                            checked={checkedCheckboxes.includes(category.id)}
-                          />{" "}
-                          {category.name}
-                        </label>
-                      </CheckBox>
-                    ))}
-                  </DropDownSection>
+                  {dropDownSection(moreCategories)}
                 </DropDown>
               </DropDownWrapper>
             </Category>
