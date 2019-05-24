@@ -81,7 +81,7 @@ const Category = styled.div`
   user-select: none;
   position: relative;
   cursor: pointer;
-  & * {
+  & > :not(:first-child) {
     cursor: default;
   }
 `;
@@ -143,6 +143,9 @@ const CheckBox = styled.span`
   & * {
     cursor: pointer;
   }
+ &  input{
+ background: white;
+ }
 `;
 
 const SearchAll = styled.span`
@@ -173,12 +176,12 @@ const moreCategories = [
   { name: "Hidden", id: 18 }
 ];
 
-// use hooks
 class App extends Component {
   constructor() {
     super();
     this.state = {
       input: "",
+      jobInput:"",
       response: [],
       selectedCategory: "in all categories",
       dropDownOpen: false,
@@ -186,6 +189,7 @@ class App extends Component {
       locationInputInFocus: false
     };
   }
+  categoryRef = null;
 
   jsonp = (url, callback) => {
     // Most examples I've found use either jQuery or other similar libraries to handle JSONP,
@@ -205,6 +209,20 @@ class App extends Component {
     const script = document.createElement("script");
     script.src = url;
     document.body.appendChild(script);
+  };
+
+  componentDidMount() {
+    document.addEventListener("mousedown", this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
+
+  handleClickOutside = event => {
+    if (this.categoryRef && !this.categoryRef.contains(event.target)) {
+      this.setState({ dropDownOpen: false });
+    }
   };
 
   updateCategoryText = () => {
@@ -280,7 +298,6 @@ class App extends Component {
   };
 
   render() {
-    console.log(this.state.response);
     return (
       <div>
         <Container>
@@ -296,6 +313,7 @@ class App extends Component {
                 onChange={e => this.setState({ jobInput: e.target.value })}
               />
               <Category
+                ref={el => (this.categoryRef = el)}
                 onClick={() => {
                   this.setState({ dropDownOpen: !this.state.dropDownOpen });
                 }}
@@ -317,8 +335,8 @@ class App extends Component {
                       </SearchAll>
                     </DropDownHeader>
                     <DropDownSection>
-                      {topCategories.map(category => (
-                        <CheckBox>
+                      {topCategories.map((category, idx) => (
+                        <CheckBox key={idx}>
                           {" "}
                           <label>
                             <input
@@ -340,8 +358,8 @@ class App extends Component {
                       <span> More Categories </span>
                     </DropDownHeader>
                     <DropDownSection>
-                      {moreCategories.map(category => (
-                        <CheckBox>
+                      {moreCategories.map((category, idx) => (
+                        <CheckBox key={idx}>
                           {" "}
                           <label>
                             <input
@@ -366,15 +384,20 @@ class App extends Component {
                 <LocationInput
                   type="text"
                   value={this.state.input}
-                  onChange={e => this.setState({ input: e.target.value }, () => this.handleLocationSearch())}
+                  onChange={e =>
+                    this.setState({ input: e.target.value }, () =>
+                      this.handleLocationSearch()
+                    )
+                  }
                   onFocus={() => {
                     this.handleLocationInputFocus(true);
                   }}
                 />
                 {this.state.locationInputInFocus && (
                   <LocationInputDropDown>
-                    {this.state.response.map(item => (
+                    {this.state.response.map((item, idx) => (
                       <LocationInputDropDownItem
+                        key={idx}
                         onClick={() => {
                           this.setInput(item);
                           this.handleLocationInputFocus(false);
