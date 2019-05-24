@@ -6,11 +6,11 @@ const Container = styled.div`
   width: 984px;
   height: 400px;
   background: grey;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "Xing Sans","Trebuchet MS",Verdana,sans-serif;
   white-space: pre-line;
   font-size: 16px;
-  //background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%);
-  //url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
+  background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%),
+  url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
   background-size: cover;
   padding: 40px 60px 10px 30px;
 `;
@@ -23,6 +23,7 @@ const Title = styled.div`
   color: white;
   font-size: 36px;
   margin-bottom: 30px;
+  font-weight: 200;
 `;
 
 const JobInput = styled.input`
@@ -39,6 +40,7 @@ const JobInput = styled.input`
 const LocationInput = styled.input`
   padding: 0;
   width: 250px;
+  margin-right:15px;
   //font-size: 16px;
 
   text-indent: 10px;
@@ -69,6 +71,7 @@ const LocationInputDropDownItem = styled.div`
 
 const Category = styled.div`
   width: 250px;
+  margin-right:15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -111,7 +114,7 @@ background: white;
 top: 40px;
     right: 0;
 width: 500px;
-height: 300px;
+height: 420px;
 z-index: 1;
 overflow: auto;
 `;
@@ -125,10 +128,14 @@ const DropDownHeader = styled.div`
   justify-content: space-between;
   padding: 10px;
   box-sizing: border-box;
-  height: 35px;
-  border-top: grey 1px solid;
-  border-bottom: grey 1px solid;
+  height: 40px;
+  border-top: lightgrey 1px solid;
+  border-bottom: lightgrey 1px solid;
   font-weight: 700;
+
+  & :nth-child(2) {    color: #007575;
+  font-weight: 400;
+  }
 `;
 
 const DropDownSection = styled.div`
@@ -140,12 +147,63 @@ const DropDownSection = styled.div`
 const CheckBox = styled.span`
   flex-basis: 50%;
   cursor: pointer;
+      margin-bottom: 15px;
   & * {
     cursor: pointer;
   }
-  & input {
-    background: white;
+  & > :first-child {
+     display: block;
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   }
+
+   & input {
+ position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  }
+
+    & span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 12px;
+  width: 12px;
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  }
+
+      & span:after {
+ content: "";
+  position: absolute;
+  display: none;
+  }
+
+  & > :first-child input:checked ~ span:after {
+  display: block;
+  }
+
+> :first-child span:after {
+color: #007575;
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid ;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+}
 `;
 
 const SearchAll = styled.span`
@@ -276,6 +334,7 @@ function App() {
                             value={category.name}
                             checked={checkedCheckboxes.includes(category.id)}
                           />{" "}
+                          <span/>
                           {category.name}
                         </label>
                       </CheckBox>
@@ -287,8 +346,8 @@ function App() {
       <Container>
         <div>
           <Title>
-            {`asd a asdasd adsadsas adsa
-          asd asd asdasd adaa`}
+            {`For a better working life
+            The new XING jobs`}
           </Title>
           <SearchBar>
             <JobInput
@@ -325,7 +384,6 @@ function App() {
               </DropDownWrapper>
             </Category>
             <LocationInputWrapper>
-              {/*TODO find better way*/}
               <LocationInput
                 type="text"
                 value={input}
