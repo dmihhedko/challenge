@@ -1,6 +1,35 @@
 import React, { useState, useRef, useEffect } from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
+import { jsonp } from "./jsonp";
+
+// Some people like to put their styles into a separate file, but because we are separating by
+// components rather than technologies I think it's correct that the styles are placed in the same
+// archive, unless they're common styles
+
+const topCategories = [
+  { name: "IT and telecommunication", id: 1 },
+  { name: "Sales and commerce", id: 2 },
+  { name: "Production, construction, trade", id: 3 },
+  { name: "Management/executive and strategic management", id: 4 },
+  { name: "Other", id: 5 },
+  { name: "Engineering/technical", id: 6 },
+  { name: "Health, medical and social", id: 7 },
+  { name: "Finance and accounting", id: 8 }
+];
+
+const moreCategories = [
+  { name: "Not categorized", id: 9 },
+  { name: "Banking, insurance and financial services", id: 10 },
+  { name: "Purchasing, transport, logistics", id: 11 },
+  { name: "Administration", id: 12 },
+  { name: "Marketing and advertising", id: 13 },
+  { name: "Training/instruction", id: 14 },
+  { name: "Hidden", id: 15 },
+  { name: "Hidden", id: 16 },
+  { name: "Hidden", id: 17 },
+  { name: "Hidden", id: 18 }
+];
 
 const Container = styled.div`
   width: 984px;
@@ -232,30 +261,7 @@ const SearchAll = styled.span`
   cursor: pointer;
 `;
 
-const topCategories = [
-  { name: "IT and telecommunication", id: 1 },
-  { name: "Sales and commerce", id: 2 },
-  { name: "Production, construction, trade", id: 3 },
-  { name: "Management/executive and strategic management", id: 4 },
-  { name: "Other", id: 5 },
-  { name: "Engineering/technical", id: 6 },
-  { name: "Health, medical and social", id: 7 },
-  { name: "Finance and accounting", id: 8 }
-];
-
-const moreCategories = [
-  { name: "Not categorized", id: 9 },
-  { name: "Banking, insurance and financial services", id: 10 },
-  { name: "Purchasing, transport, logistics", id: 11 },
-  { name: "Administration", id: 12 },
-  { name: "Marketing and advertising", id: 13 },
-  { name: "Training/instruction", id: 14 },
-  { name: "Hidden", id: 15 },
-  { name: "Hidden", id: 16 },
-  { name: "Hidden", id: 17 },
-  { name: "Hidden", id: 18 }
-];
-
+// Using hooks is much cleaner and concise and we don't have to use classes
 function App() {
   const [input, setInput] = useState("");
   const [jobInput, setJobInput] = useState("");
@@ -266,25 +272,10 @@ function App() {
   const [locationInputInFocus, setLocationInputInFocus] = useState(false);
   const categoryRef = useRef(null);
 
-  const jsonp = (url, callback) => {
-    // Most examples I've found use either jQuery or other similar libraries to handle JSONP,
-    // including the API's website
-    // It would also be prudent to check the result for malicious content, but we would first need to
-    // convert the result to a string, and I don't see how we can do that without XMLHttpRequest requests
-    // which defeats the purpose of using JSONP
-    // Apparently, there was a website - json-p.org, with more info on JSONP security,
-    // but it's no longer available
-
-    const callbackName = "JSONP";
-    window[callbackName] = function(data) {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      callback(data);
-    };
-    const script = document.createElement("script");
-    script.src = url;
-    document.body.appendChild(script);
-  };
+  // Ideally we wouldn't want to depend on the context inside the function's body and all the dependencies
+  // should be passed explicitly. But I find that within a component this way the functions
+  // are easier to read rather than having to go to the function call
+  // and we also wouldn't want to abstract before there is a need for it (YAGNI)
 
   const handleClickOutside = event => {
     if (categoryRef && !categoryRef.current.contains(event.target)) {
@@ -343,7 +334,7 @@ function App() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
-
+  // To avoid code repetition and can be in its own file
   const dropDownSection = array => (
     <DropDownSection>
       {array.map((category, idx) => (
@@ -366,6 +357,8 @@ function App() {
     </DropDownSection>
   );
 
+  // This component can further be subdivided into components depending on the needs of the project.
+  // As far as I'm aware the rule of thumb is that a component shouldn't surpass 500 lines
   return (
     <div>
       <Container>
