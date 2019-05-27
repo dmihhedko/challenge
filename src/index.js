@@ -48,7 +48,6 @@ const Title = styled.div`
 const JobInput = styled.input`
   padding: 0;
   width: 250px;
-  //font-size: 16px;
 
   text-indent: 10px;
   height: 35px;
@@ -60,7 +59,6 @@ const LocationInput = styled.input`
   padding: 0;
   width: 250px;
   margin-right: 15px;
-  //font-size: 16px;
 
   text-indent: 10px;
   height: 35px;
@@ -74,16 +72,16 @@ const LocationInputWrapper = styled.div`
 
 const LocationInputDropDown = styled.div`
   height: auto;
-  width: 250px;
+  width: 248px;
   position: absolute;
   z-index: 1;
   background-color: white;
-  top: 35px;
-  right: 0;
+  top: 36px;
+  right: 16px;
 `;
 
 const LocationInputDropDownItem = styled.div`
-  padding: 10px;
+  padding: 5px 10px;
   border-bottom: 1px grey solid;
   cursor: pointer;
 `;
