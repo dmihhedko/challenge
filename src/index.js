@@ -6,15 +6,19 @@ const Container = styled.div`
   width: 984px;
   height: 400px;
   background: grey;
-  font-family: "Xing Sans","Trebuchet MS",Verdana,sans-serif;
+  font-family: "Xing Sans", "Trebuchet MS", Verdana, sans-serif;
   white-space: pre-line;
   font-size: 14px;
-  background:linear-gradient(90deg, rgba(47,139,142,0.6) 0%, rgba(47,139,142,0.6) 70%, rgba(54,114,65,0.6) 100%),
-  url('https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg');
+  background: linear-gradient(
+      90deg,
+      rgba(47, 139, 142, 0.6) 0%,
+      rgba(47, 139, 142, 0.6) 70%,
+      rgba(54, 114, 65, 0.6) 100%
+    ),
+    url("https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/07/11/11/harold-0.jpg");
   background-size: cover;
   padding: 40px 60px 10px 30px;
-      background-position-y: top, -60px;
-
+  background-position-y: top, -60px;
 `;
 
 const SearchBar = styled.div`
@@ -24,7 +28,7 @@ const SearchBar = styled.div`
 const Button = styled.div`
   color: black;
   font-weight: 700;
-      background-image: linear-gradient(to bottom,#bde300 0,#8fac00 100%);
+  background-image: linear-gradient(to bottom, #bde300 0, #8fac00 100%);
   border-radius: 3px;
   display: flex;
   justify-content: center;
@@ -55,7 +59,7 @@ const JobInput = styled.input`
 const LocationInput = styled.input`
   padding: 0;
   width: 250px;
-  margin-right:15px;
+  margin-right: 15px;
   //font-size: 16px;
 
   text-indent: 10px;
@@ -86,7 +90,7 @@ const LocationInputDropDownItem = styled.div`
 
 const Category = styled.div`
   width: 250px;
-  margin-right:15px;
+  margin-right: 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -143,7 +147,6 @@ overflow: auto;
 }
 `;
 
-
 const DropDownHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -154,8 +157,9 @@ const DropDownHeader = styled.div`
   border-bottom: lightgrey 1px solid;
   font-weight: 700;
 
-  & :nth-child(2) {    color: #007575;
-  font-weight: 400;
+  & :nth-child(2) {
+    color: #007575;
+    font-weight: 400;
   }
 `;
 
@@ -292,17 +296,18 @@ function App() {
   };
 
   const updateCategoryText = () => {
-    if (checkedCheckboxes.length > 0){
-    const jointArray = [...topCategories, ...moreCategories];
-    const namesToAdd = checkedCheckboxes.map(
-      checkedId => jointArray.find(category => category.id === checkedId).name
-    );
-    const selectedCategory =
-      jointArray.length === checkedCheckboxes.length
-        ? "in all categories"
-        : namesToAdd.join(", ");
+    if (checkedCheckboxes.length > 0) {
+      const jointArray = [...topCategories, ...moreCategories];
+      const namesToAdd = checkedCheckboxes.map(
+        checkedId => jointArray.find(category => category.id === checkedId).name
+      );
+      const selectedCategory =
+        jointArray.length === checkedCheckboxes.length
+          ? "in all categories"
+          : namesToAdd.join(", ");
 
-    setSelectedCategory(selectedCategory);}
+      setSelectedCategory(selectedCategory);
+    }
   };
 
   const handleLocationSearch = () => {
@@ -318,7 +323,6 @@ function App() {
       setCheckedCheckboxes(checkedCheckboxes.concat(id));
     } else {
       setCheckedCheckboxes(checkedCheckboxes.filter(it => it !== id));
-
     }
   };
 
@@ -343,25 +347,27 @@ function App() {
     };
   });
 
-    const dropDownSection = (array) => (<DropDownSection>
-                    {array.map((category, idx) => (
-                      <CheckBox key={idx}>
-                        {" "}
-                        <label>
-                          <input
-                            onChange={() => {
-                              handleCheckBoxClick(category.id);
-                            }}
-                            type="checkbox"
-                            value={category.name}
-                            checked={checkedCheckboxes.includes(category.id)}
-                          />{" "}
-                          <span/>
-                          {category.name}
-                        </label>
-                      </CheckBox>
-                    ))}
-                  </DropDownSection>)
+  const dropDownSection = array => (
+    <DropDownSection>
+      {array.map((category, idx) => (
+        <CheckBox key={idx}>
+          {" "}
+          <label>
+            <input
+              onChange={() => {
+                handleCheckBoxClick(category.id);
+              }}
+              type="checkbox"
+              value={category.name}
+              checked={checkedCheckboxes.includes(category.id)}
+            />{" "}
+            <span />
+            {category.name}
+          </label>
+        </CheckBox>
+      ))}
+    </DropDownSection>
+  );
 
   return (
     <div>
@@ -409,7 +415,7 @@ function App() {
             <LocationInputWrapper>
               <LocationInput
                 type="text"
-                   placeholder={"Location"}
+                placeholder={"Location"}
                 value={input}
                 onChange={e => {
                   setInput(e.target.value);
@@ -418,7 +424,9 @@ function App() {
                   setLocationInputInFocus(true);
                 }}
                 /* eslint-disable-next-line */
-                onKeyPress={(e)=>{e.charCode === 13?alert("submitted"):undefined;}}
+                onKeyPress={e => {
+                  e.charCode === 13 ? alert("submitted") : undefined;
+                }}
               />
               {locationInputInFocus && (
                 <LocationInputDropDown>
@@ -436,7 +444,14 @@ function App() {
                 </LocationInputDropDown>
               )}
             </LocationInputWrapper>
-            <Button onClick={() => {alert("submitted")}}> Search</Button>
+            <Button
+              onClick={() => {
+                alert("submitted");
+              }}
+            >
+              {" "}
+              Search
+            </Button>
           </SearchBar>
         </div>
       </Container>
