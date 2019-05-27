@@ -172,63 +172,62 @@ const DropDownSection = styled.div`
 const CheckBox = styled.span`
   flex-basis: 50%;
   cursor: pointer;
-      margin-bottom: 15px;
+  margin-bottom: 15px;
   & * {
     cursor: pointer;
   }
   & > :first-child {
-     display: block;
-  position: relative;
-  padding-left: 25px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
-   & input {
- position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+  & input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
   }
 
-    & span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 12px;
-  width: 12px;
-  background-color: white;
-  border: 1px solid lightgrey;
-  border-radius: 3px;
+  & span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 12px;
+    width: 12px;
+    background-color: white;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
   }
 
-      & span:after {
- content: "";
-  position: absolute;
-  display: none;
+  & span:after {
+    content: "";
+    position: absolute;
+    display: none;
   }
 
   & > :first-child input:checked ~ span:after {
-  display: block;
+    display: block;
   }
 
-> :first-child span:after {
-color: #007575;
-      left: 3px;
+  > :first-child span:after {
+    color: #007575;
+    left: 3px;
     top: 0px;
     width: 4px;
     height: 8px;
-  border: solid ;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-}
+    border: solid;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
 `;
 
 const SearchAll = styled.span`
@@ -423,8 +422,8 @@ function App() {
                 onFocus={() => {
                   setLocationInputInFocus(true);
                 }}
-                /* eslint-disable-next-line */
                 onKeyPress={e => {
+                  /* eslint-disable-next-line */
                   e.charCode === 13 ? alert("submitted") : undefined;
                 }}
               />
